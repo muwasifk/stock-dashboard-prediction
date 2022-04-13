@@ -1,11 +1,12 @@
 import json
+
 import dash
-import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html, dcc
+
+import dash_bootstrap_components as dbc
+
 import plotly.express as px
 import pandas as pd
-# Market Data 
-import yfinance as yf
 
 df = px.data.stocks()
 fig = px.line(df, x='date', y="GOOG")
@@ -21,7 +22,6 @@ colors = {
     'background': '#111111',
     'text': '#363636'
 }
-
 
 trendingStocks = [['/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png'], ['AAPL', 'TSLA', 'GME'], ['600$', '800$', '200$']]
 cardsList = []
