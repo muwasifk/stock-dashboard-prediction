@@ -1,5 +1,4 @@
-import json
-import dash
+import json, dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html, dcc
 import plotly.express as px
@@ -60,36 +59,7 @@ navbar = dbc.Navbar(
     className="mb-5"
 )
 
-"""df = px.data.stocks()
-fig = px.line(df, x='date', y="GOOG")
 
-trendingStocks = [['/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png'], ['AAPL', 'TSLA', 'GME'], ['600$', '800$', '200$']]
-cardsList = []
-for i in range(0, 3):
-    cardText = html.H2(f"{trendingStocks[1][i]}: {trendingStocks[2][i]}")
-    
-    cardsList.append(dbc.Card(
-        [
-            dcc.Graph(figure=fig),
-            dbc.CardBody(
-                html.H4(cardText)
-            )
-        ],
-        color = "success",
-        outline = True
-    ))
-cards = html.Div(
-    children = dbc.Row([
-        dbc.Col(cardsList[0]), 
-        dbc.Col(cardsList[1]),
-        dbc.Col(cardsList[2])
-    ]),
-    style = {
-        'margin-left' : '30px',
-        'margin-right' : '30px'
-    }
-)
-"""
 def toggle_navbar_collapse(n, is_open):
     if n:
         return not is_open
