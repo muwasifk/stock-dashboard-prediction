@@ -12,7 +12,7 @@ from pages import about, portfolio, watchlist, home, search
 
 import plotly.graph_objs as go 
 
-app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
+app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY, 'https://fonts.googleapis.com/css?family=Montserrat'])
 
 nav_item = dbc.NavItem(dbc.NavLink("Home", href="/home"))
 
