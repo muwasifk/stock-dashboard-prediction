@@ -8,8 +8,10 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 
-df = px.data.stocks()
-fig = px.line(df, x='date', y="GOOG")
+import numpy as np
+from pandas_datareader import data as pdr 
+import plotly.graph_objs as go 
+import yfinance as yf
 
 with open("./config.json") as jsonFile:
     jsonObject = json.load(jsonFile)
@@ -23,16 +25,40 @@ colors = {
     'text': '#363636'
 }
 
-trendingStocks = [['/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png', '/static/images/placeholder286x180.png'], ['AAPL', 'TSLA', 'GME'], ['600$', '800$', '200$']]
+trendingStocks = [['^GSPC', '^DJI', '^IXIC'], ['S&P 500', 'Dow Jones Industrial Average', 'NASDAQ Composite']]
 cardsList = []
 for i in range(0, 3):
-    cardText = html.H2(f"{trendingStocks[1][i]}: {trendingStocks[2][i]}")
+    yf.pdr_override()
+    stock = trendingStocks[0][i]
+    df = yf.download(tickers=stock,period='3mo',interval='1d')
+
+    fig=go.Figure()
+
+    fig.add_trace(go.Candlestick(x=df.index,
+                    open=df['Open'],
+                    high=df['High'],
+                    low=df['Low'],
+                    close=df['Close'], name = 'market data'))
+
+    fig.update_layout(
+        yaxis_title='Price (USD/Share)', xaxis_rangeslider_visible=False)               
+
+    infor = yf.Ticker(trendingStocks[0][i]).info
+
+    cardText = html.H5(f"{trendingStocks[1][i]}:\n{int(infor['regularMarketPrice'])}$")
     
     cardsList.append(dbc.Card(
         [
             dcc.Graph(figure=fig),
-            dbc.CardBody(
-                html.H4(cardText)
+            dbc.CardBody([
+
+            
+                html.H4(cardText),
+                html.H6(f"Day High: {infor['dayHigh']}"),
+                html.H6(f"Day Low: {infor['dayLow']}"),
+                html.H6(f"52 Week High: {infor['fiftyTwoWeekHigh']}"),
+                html.H6(f"52 Week Low: {infor['fiftyTwoWeekLow']}")
+            ]
             )
         ],
         color = "success",
@@ -58,7 +84,7 @@ layout = html.Div(children=[
             'color': colors['text']
         }
     ),
-    html.H2(children='Trending Stocks', style={
+    html.H2(children=' ', style={
         'textAlign': 'left',
         'color': colors['text'],
         'margin-left': '30px',
