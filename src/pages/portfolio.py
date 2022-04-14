@@ -3,7 +3,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html, dcc
 import plotly.express as px
-
+import yfinance as yf
 with open("pages/portfolioStocks.json") as jsonFile:
     jsonObject = json.load(jsonFile)
     jsonFile.close()
@@ -30,7 +30,7 @@ totalProfit = 0
 totalBalance = 0
 rows=[]
 for i in range(1, len(portfolioStocks)):
-
+    stockInfo = yf.Ticker(portfolioStocks[i][0]).info
     currentStock = portfolioStocks[i]
     ticker = currentStock[0]
     currentPrice = 400

@@ -3,6 +3,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html, dcc
 import plotly.express as px
+import yfinance as yf
 
 with open("pages/watchlist.json") as jsonFile:
     jsonObject = json.load(jsonFile)
@@ -11,12 +12,27 @@ with open("pages/watchlist.json") as jsonFile:
 portfolioStocks = jsonObject["watchlistStocks"]
 
 table_header = [
-    html.Thead(html.Tr([html.Th("Ticker"), html.Th("Open"), html.Th("High"), html.Th("Low"), html.Th("52W High"), html.Th("52W Low")]))
+    html.Thead(html.Tr([html.Th("Ticker"), html.Th("Current (USD)"), html.Th("Open (USD)"), html.Th("High (USD)"), html.Th("Low (USD)"), html.Th("52W High (USD)"), html.Th("52W Low (USD)")]))
 ]
 
-row1 = html.Tr([html.Td("AAPL"), html.Td("167.39"), html.Td("170.90"), html.Td("166.78"), html.Td("182.94"), html.Td("122.25")])
+rows = []
 
-table_body = [html.Tbody([row1, row1])]
+for i in range(0, len(portfolioStocks)):
+    curData = yf.Ticker(portfolioStocks[i]).info 
+
+    rows.append(html.Tr([
+        html.Td(portfolioStocks[i]),
+        html.Td(curData['regularMarketPrice']),
+        html.Td(curData['open']),
+        html.Td(curData['dayHigh']),
+        html.Td(curData['dayLow']),
+        html.Td(curData['fiftyTwoWeekHigh']),
+        html.Td(curData['fiftyTwoWeekLow'])
+    ]))
+
+
+
+table_body = [html.Tbody(rows)]
 
 table = dbc.Table(table_header + table_body, bordered = False, striped = True, hover=True)
 
