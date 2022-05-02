@@ -1,6 +1,5 @@
 import json
 
-# https://betterprogramming.pub/how-to-work-with-json-files-in-python-bedb5b37cbc9
 with open("config.json") as jsonFile:
     jsonObject = json.load(jsonFile)
     jsonFile.close()

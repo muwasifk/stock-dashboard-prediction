@@ -1,8 +1,6 @@
 import json
-import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, html, dcc
-import plotly.express as px
+from dash import html
 import yfinance as yf
 
 with open("pages/watchlist.json") as jsonFile:
@@ -12,7 +10,19 @@ with open("pages/watchlist.json") as jsonFile:
 portfolioStocks = jsonObject["watchlistStocks"]
 
 table_header = [
-    html.Thead(html.Tr([html.Th("Ticker"), html.Th("Current (USD)"), html.Th("Open (USD)"), html.Th("High (USD)"), html.Th("Low (USD)"), html.Th("52W High (USD)"), html.Th("52W Low (USD)")]))
+    html.Thead(
+        html.Tr(
+            [
+                html.Th("Ticker"), 
+                html.Th("Current (USD)"), 
+                html.Th("Open (USD)"), 
+                html.Th("High (USD)"), 
+                html.Th("Low (USD)"), 
+                html.Th("52W High (USD)"), 
+                html.Th("52W Low (USD)")
+            ]
+        )
+    )
 ]
 
 rows = []
@@ -20,17 +30,19 @@ rows = []
 for i in range(0, len(portfolioStocks)):
     curData = yf.Ticker(portfolioStocks[i]).info 
 
-    rows.append(html.Tr([
-        html.Td(portfolioStocks[i]),
-        html.Td(curData['regularMarketPrice']),
-        html.Td(curData['open']),
-        html.Td(curData['dayHigh']),
-        html.Td(curData['dayLow']),
-        html.Td(curData['fiftyTwoWeekHigh']),
-        html.Td(curData['fiftyTwoWeekLow'])
-    ]))
-
-
+    rows.append(
+        html.Tr(
+            [
+                html.Td(portfolioStocks[i]),
+                html.Td(curData['regularMarketPrice']),
+                html.Td(curData['open']),
+                html.Td(curData['dayHigh']),
+                html.Td(curData['dayLow']),
+                html.Td(curData['fiftyTwoWeekHigh']),
+                html.Td(curData['fiftyTwoWeekLow'])
+            ]
+        )
+    )
 
 table_body = [html.Tbody(rows)]
 
@@ -52,6 +64,6 @@ layout = html.Div(children=[
             'padding': '30px',
             'text-align': 'center'
         }
-        
-    )
+    ) 
 ], id='page-content')
+

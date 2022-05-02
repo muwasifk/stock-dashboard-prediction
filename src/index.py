@@ -1,16 +1,9 @@
-import json
-
 import dash
 from dash import Input, Output, State, html, dcc
 
 import dash_bootstrap_components as dbc
 
-import plotly.express as px
-import pandas as pd
-
 from pages import about, portfolio, watchlist, home, search
-
-import plotly.graph_objs as go 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY, 'https://fonts.googleapis.com/css?family=Montserrat'])
 
@@ -78,4 +71,4 @@ def displayPage(newpath):
         return home.layout
 
 if __name__ == "__main__":
-    app.run_server(debug=False, port=8000)
+    app.run_server(debug=True, port=8000)
