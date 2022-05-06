@@ -66,6 +66,8 @@ def displayPage(newpath):
         return watchlist.layout
     elif newpath == '/search':
         return search.layout
+    elif newpath == '/testuwu':
+        return testuwu.layout
     else:
         return home.layout
 
