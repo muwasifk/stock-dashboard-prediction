@@ -1,11 +1,10 @@
 import dash
 from dash import Input, Output, State, html, dcc
-
 import dash_bootstrap_components as dbc
 
-from pages import about, portfolio, watchlist, home, search
+from pages import about, portfolio, watchlist, home, search, testuwu
 
-app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY, 'https://fonts.googleapis.com/css?family=Montserrat'])
+from app import app
 
 nav_item = dbc.NavItem(dbc.NavLink("Home", href="/home"))
 
@@ -70,5 +69,5 @@ def displayPage(newpath):
     else:
         return home.layout
 
-if __name__ == "__main__":
-    app.run_server(debug=True, port=8000)
+
+app.run_server(debug=True, port=8000)

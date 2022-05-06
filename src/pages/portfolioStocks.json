@@ -1,7 +1,6 @@
 {
     "portfolioStocks": [
-        ["Stock name", "Volume", "Date Bought"],
-        ["AAPL",6, "12/04/2021"],
+        ["AAPL",8, "12/04/2021"],
         ["TSLA", 4, "06/09/2020"],
         ["GOOG", 5, "02/13/2020"],
         ["NVDA", 9, "09/21/2018"]
