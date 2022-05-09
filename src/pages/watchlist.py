@@ -1,9 +1,12 @@
 import json
 import dash_bootstrap_components as dbc
-from dash import html
+
+from dash import html, Output, State, Input, dcc
 import yfinance as yf
 
 from pages.funcs import fetch
+
+from app import app
 
 def formtable():
     with open("pages/watchlist.json") as jsonFile:
@@ -53,7 +56,6 @@ def formtable():
 
     return table
 
-table = formtable()
 
 layout = html.Div(children=[
     html.H1(
@@ -64,13 +66,34 @@ layout = html.Div(children=[
             'font-family': 'Montserrat'
         }),
     html.Div(
-        children = table,
         style = {
             'margin': 'auto',
             'width': '90%',
             'padding': '30px',
             'text-align': 'center'
-        }
-    ) 
+        },
+        id = 'body-table'
+    ),
+    
+    html.Div(dbc.Button(
+        children = 'Refresh Data',
+        style = {
+            'margin': 'auto',
+            'width': '90%',
+            'padding': '30px',
+            'text-align': 'center'
+        },
+        id='refresh-button',
+        n_clicks=0,  outline=True, color="danger"
+    ), 
+        className="d-grid gap-2 col-6 mx-auto"),
+
 ], id='page-content')
 
+@app.callback(
+    Output('body-table', 'children'),
+    Input('refresh-button', 'n_clicks')
+)
+def refreshTable(n_clicks):
+    table = formtable()
+    return [table]

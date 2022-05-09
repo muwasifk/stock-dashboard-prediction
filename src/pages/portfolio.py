@@ -6,6 +6,7 @@ import yfinance as yf
 import datetime
 
 from pages.funcs import fetch
+from app import app 
 
 colors = {
     'background': '#111111',
@@ -43,7 +44,7 @@ def formtable():
         currentStock = portfolioStocks[i]
         ticker = currentStock[0]
         currentPrice = float(fetch.portfolioFetchData(ticker).replace(",",""))
-        buyPrice = 600
+        buyPrice = 200
         volume = currentStock[1]
         profit = (currentPrice - buyPrice) * volume
         dateBought = currentStock[2]
@@ -54,7 +55,7 @@ def formtable():
             html.Td(ticker),
             html.Td(f"{currentPrice}$"),
             html.Td(f"{buyPrice}$"),
-            html.Td(str(volume)),
+            html.Td(f"{volume}"),
             html.Td(f"{profit}$"),
             html.Td(dateBought)
         ]))
@@ -65,7 +66,7 @@ def formtable():
 
     return table 
 
-table = formtable()
+
 
 layout = html.Div(children = [
     html.H1(
@@ -77,13 +78,33 @@ layout = html.Div(children = [
         }
     ),
     html.Div(
-        children = table,
         style = {
             'margin': 'auto',
             'width': '90%',
             'padding': '30px',
             'text-align': 'center'
-        }
+        },
+        id = 'body-table2'
     ),
+
+    html.Div(dbc.Button(
+        children = 'Refresh Data',
+        style = {
+            'margin': 'auto',
+            'width': '90%',
+            'padding': '30px',
+            'text-align': 'center'
+        },
+        id='refresh-button2',
+        n_clicks=0,  outline=True, color="danger"
+    ), 
+        className="d-grid gap-2 col-6 mx-auto"),
 ], id='page-content')
 
+@app.callback(
+    Output('body-table2', 'children'),
+    Input('refresh-button2', 'n_clicks')
+)
+def refreshTable(n_clicks):
+    table = formtable()
+    return [table]

@@ -13,6 +13,8 @@ from pandas_datareader import data as pdr
 import plotly.graph_objs as go 
 import yfinance as yf
 
+from pages.funcs import fetch
+
 with open("./config.json") as jsonFile:
     jsonObject = json.load(jsonFile)
     jsonFile.close()
@@ -28,24 +30,12 @@ colors = {
 trendingStocks = [['^GSPC', '^DJI', '^IXIC'], ['S&P 500', 'Dow Jones Industrial Average', 'NASDAQ Composite']]
 cardsList = []
 for i in range(0, 3):
-    yf.pdr_override()
+    
     stock = trendingStocks[0][i]
-    df = yf.download(tickers=stock,period='3mo',interval='1d')
 
-    fig=go.Figure()
+    fig, infor = fetch.homePage(stock)
 
-    fig.add_trace(go.Candlestick(x=df.index,
-                    open=df['Open'],
-                    high=df['High'],
-                    low=df['Low'],
-                    close=df['Close'], name = 'market data'))
-
-    fig.update_layout(
-        yaxis_title='Price (USD/Share)', xaxis_rangeslider_visible=False)               
-
-    infor = yf.Ticker(trendingStocks[0][i]).info
-
-    cardText = html.H5(f"{trendingStocks[1][i]}:\n{int(infor['regularMarketPrice'])}$")
+    cardText = html.H5(f"{trendingStocks[1][i]}:\n{float(infor[0])}$")
     
     cardsList.append(dbc.Card(
         [
@@ -54,10 +44,10 @@ for i in range(0, 3):
 
             
                 html.H4(cardText),
-                html.H6(f"Day High: {infor['dayHigh']}"),
-                html.H6(f"Day Low: {infor['dayLow']}"),
-                html.H6(f"52 Week High: {infor['fiftyTwoWeekHigh']}"),
-                html.H6(f"52 Week Low: {infor['fiftyTwoWeekLow']}")
+                html.H6(f"Day High: {infor[3]}"),
+                html.H6(f"Day Low: {infor[4]}"),
+                html.H6(f"52 Week High: {infor[5]}"),
+                html.H6(f"52 Week Low: {infor[6]}")
             ]
             )
         ],
