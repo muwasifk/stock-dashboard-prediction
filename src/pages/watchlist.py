@@ -35,7 +35,6 @@ def formtable():
 
     for i in range(0, len(watchlistStocks)):
         curData = fetch.watchlistFetchData(watchlistStocks[i]) 
-
         rows.append(
             html.Tr(
                 [
@@ -53,7 +52,7 @@ def formtable():
     table_body = [html.Tbody(rows)]
 
     table = dbc.Table(table_header + table_body, bordered = False, striped = True, hover=True)
-
+    
     return table
 
 
@@ -75,7 +74,9 @@ layout = html.Div(children=[
         id = 'body-table'
     ),
     
-    html.Div(dbc.Button(
+    html.Div(
+        dbc.Row([
+            dbc.Col( dbc.Button(
         children = 'Refresh Data',
         style = {
             'margin': 'auto',
@@ -85,9 +86,41 @@ layout = html.Div(children=[
         },
         id='refresh-button',
         n_clicks=0,  outline=True, color="danger"
-    ), 
+    )),
+    dbc.Col(
+        dbc.Button(
+                children = 'Remove stock',
+                style = {
+                    'text-align': 'center'
+                },
+                id='remove-button',
+                n_clicks=0,  outline=True, color="danger"
+            ), width=6)
+    
+        ]), 
         className="d-grid gap-2 col-6 mx-auto"),
+    dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle("Remove a stock"), close_button=True),
+            dbc.ModalBody([
+                dbc.Input(id="removed-stock", placeholder="Stock ticker (in caps)", type="text", debounce = True),
+               ], id = "watchlist-remove-modal"),
 
+
+            dbc.ModalFooter(
+                dbc.Button(
+                    "Submit",
+                    id="submit-button",
+                    className="ms-auto",
+                    n_clicks=0,
+                )
+            ),
+        ],
+        id="remove-popup-watchlist",
+        centered=True,
+        is_open=False,
+    ),
+    html.Div(id = 'remove-toast2')
 ], id='page-content')
 
 @app.callback(
@@ -97,3 +130,51 @@ layout = html.Div(children=[
 def refreshTable(n_clicks):
     table = formtable()
     return [table]
+
+@app.callback(
+    Output('remove-popup-watchlist', 'is_open'),
+    [Input('remove-button', 'n_clicks'),
+    Input('submit-button', 'n_clicks')],
+    [State('remove-popup-watchlist', 'is_open')]
+)
+def removePopup(removeClicks, submitClicks, is_open):
+    if removeClicks or submitClicks:
+        return not is_open
+@app.callback(
+    Output('remove-toast2', 'children'),
+    [
+        Input('submit-button', 'n_clicks'),
+        Input('removed-stock', 'value'),
+    ]
+)
+def removeWatchlistStock(clicks, ticker):
+    if clicks is not None: 
+        with open("pages/watchlist.json") as jsonFile:
+            jsonObject = json.load(jsonFile)
+            jsonFile.close()
+            watchlistStocks = jsonObject["watchlistStocks"]
+        
+        try: 
+            watchlistStocks.remove(ticker)
+            jsonObject = {'watchlistStocks': watchlistStocks}
+            with open('pages/watchlist.json', 'w') as jsonFile:
+                json.dump(jsonObject, jsonFile)
+                jsonFile.close()
+            return [dbc.Toast(
+                id="sudhgsdfhg-toast",
+                icon="success",
+                header=f"Success! Removed from your watchlist.",
+                duration=2750,
+                is_open=True,
+                style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+            )]
+        except:
+            if ticker is not None and clicks is not None: 
+                return [dbc.Toast(
+                id="error-toast",
+                icon="danger",
+                header=f"Invalid ticker name. Try Again.",
+                duration=2750,
+                is_open=True,
+                style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+            )]

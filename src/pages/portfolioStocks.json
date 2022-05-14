@@ -1,8 +1,1 @@
-{
-    "portfolioStocks": [
-        ["AAPL", 10, "12/04/2021"],
-        ["TSLA", 12, "06/09/2020"],
-        ["GOOG", 5, "02/13/2020"],
-        ["NVDA", 9, "09/21/2018"]
-    ]
-}
+{"portfolioStocks": [["AAPL", 5.0, "06/04/2021", 123, "Consumer Electronics"], ["AAPL", 5.0, "06/04/2021", 123, "Consumer Electronics"], ["GME", 1.0, "06/04/2021", 171, "Specialty Retail"]]}

@@ -1,12 +1,16 @@
 import json
 import dash
+import datetime
+import time
+import requests
+from bs4 import BeautifulSoup
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html, dcc
 import plotly.express as px
 from app import app
 from pages.funcs import fetch
 import plotly.graph_objects as g
-
+import pandas as pd
 text_input = html.Div(
     [
         html.Div(dbc.Input(id="input", placeholder="Ticker", type="text", debounce=True), style = {
@@ -37,7 +41,7 @@ tickerName = []
 @app.callback(Output("layout-content", "children"), [Input("input", "value")])
 def output_text(value):
     try: 
-        fig, fullname, info = fetch.searchData(value)
+        fig, fullname, info = fetch.searchData(str(value).upper())
         returnChild = dbc.Row([
                 dbc.Col([fig]),
                 dbc.Col([
@@ -59,7 +63,10 @@ def output_text(value):
                 dbc.Modal(
                     [
                         dbc.ModalHeader(dbc.ModalTitle("Add to Portfolio"), close_button=True),
-                        dbc.ModalBody([dbc.Input(id="volume-input", placeholder="Number of Shares Bought", type="text", debounce = True), dbc.Input(id="buy-date", placeholder="Date Bought (DD/MM/YY)", type="text", debounce = True),]),
+                        dbc.ModalBody([
+                            dbc.Input(id="volume-input", placeholder="Number of Shares Bought", type="text", debounce = True), 
+                            dbc.Input(id="buy-date", placeholder="Date Bought (DD/MM/YYYY)", type="text", debounce = True),
+                        ], id = "modalbody"),
                         dbc.ModalFooter(
                             dbc.Button(
                                 "Submit",
@@ -106,9 +113,114 @@ def toggle_modal(portfolioClicks, submitClicks, is_open):
 @app.callback(
     Output('portfolio-toast', 'children'),
     [
-        Input('submit-button', 'n_clicks')
+        Input('submit-button', 'n_clicks'),
+        Input('volume-input', 'value'),
+        Input('buy-date', 'value')
     ]
 )
+def updatePortfolio(clicks, volumeValue, buyDate):
+    if volumeValue is not None and buyDate is not None:
+        try:
+            volumeValue = float(volumeValue)
+            dates = str(buyDate).split('/')
+            
+            if len(dates) == 3 and len(dates[0]) == 2 and len(dates[1]) == 2 and len(dates[2]) == 4:
+                try:
+                    currentUnixTime = str(int(time.time()))
+                    buyYear = int(dates[2])
+                    buyMonth = int(dates[1])
+                    buyDay = int(dates[0])
+                    pastUnixTime = time.mktime(datetime.date(buyYear, buyMonth, buyDay).timetuple()) 
+                    print(pastUnixTime)
+                    print(currentUnixTime)
+                    if int(pastUnixTime) > int(currentUnixTime):
+                        
+                        return [dbc.Toast(
+                            id="auto-toast",
+                            icon="danger",
+                            header=f"Invalid volume input. Try Again.",
+                            duration=2750,
+                            is_open=True,
+                            style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                        )]
+                    
+                    try:
+                        historicalCSV = pd.read_csv(f'https://query1.finance.yahoo.com/v7/finance/download/{tickerName[-1]}?period1={int(pastUnixTime) - 86400}&period2={int(pastUnixTime)}&interval=1d&events=history&includeAdjustedClose=true')
+                        
+                        buyPrice = int(historicalCSV.loc[0].at['Open'])
+                    except:
+                        return [dbc.Toast(
+                            id="auto-toast",
+                            icon="danger",
+                            header=f"Date inputted cannot be a date when the market was closed.",
+                            duration=2750,
+                            is_open=True,
+                            style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                        )]
+
+                    try: 
+                        URL = f'https://finance.yahoo.com/quote/{tickerName[-1]}/'
+
+                        page = requests.get(URL)
+                        soup = BeautifulSoup(page.content, "html.parser")
+                        
+                        industry = soup.find_all(class_='D(ib) Va(t)'); print(industry)
+                        industry = industry[0] 
+                        industry = str(industry).split(':')[2]; print(industry)
+                        industry = industry.split('Fw(600)">')[1] 
+                        industry = industry.split('<')[0]
+                        if [tickerName[-1], volumeValue, buyDate, buyPrice, industry] not in currentPortfolio:
+                            currentPortfolio.append([tickerName[-1], volumeValue, buyDate, buyPrice, industry])
+                        if clicks is not None:
+                            currentPortfolio.sort(key = lambda x : x[0])
+                            jsonData = {
+                            "portfolioStocks" : currentPortfolio
+                            }
+                            with open('pages/portfolioStocks.json', 'w') as jsonFile:
+                                json.dump(jsonData, jsonFile)
+                                jsonFile.close()
+                    except:
+                        if [tickerName[-1], volumeValue, buyDate, buyPrice] not in currentPortfolio:
+                            currentPortfolio.append([tickerName[-1], volumeValue, buyDate, buyPrice])
+                        currentPortfolio.sort(key = lambda x : x[0])
+                        jsonData = {
+                            "portfolioStocks" : currentPortfolio
+                        }
+                        with open('pages/portfolioStocks.json', 'w') as jsonFile:
+                            json.dump(jsonData, jsonFile)
+                            jsonFile.close()
+                except Exception as e:
+                    print(e)
+                    return [dbc.Toast(
+                        id="auto-toast",
+                        icon="danger",
+                        header=f"Invalid date input. Try Again.",
+                        duration=2750,
+                        is_open=True,
+                        style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                    )]
+            else:
+                print("x")
+                return [dbc.Toast(
+                    id="auto-toast",
+                    icon="danger",
+                    header=f"Invalid date input. Try Again.",
+                    duration=2750,
+                    is_open=True,
+                    style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                )]
+
+
+        except:
+            if volumeValue is not None:
+                return [dbc.Toast(
+                        id="auto-toast",
+                        icon="danger",
+                        header=f"Invalid volume input. Try Again.",
+                        duration=2750,
+                        is_open=True,
+                        style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                    )]
 
 @app.callback(
     Output("watchlist-toast", 'children'),
@@ -118,6 +230,7 @@ def updateWatchlist(n):
     if n is not None:
         if tickerName[-1] not in currentWatchlist: 
             currentWatchlist.append(tickerName[-1])
+            currentWatchlist.sort(key = lambda x : x[0])
             jsonData={
                 "watchlistStocks": currentWatchlist
             }

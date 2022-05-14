@@ -71,5 +71,4 @@ def displayPage(newpath):
     else:
         return home.layout
 
-
 app.run_server(debug=True, port=8000)

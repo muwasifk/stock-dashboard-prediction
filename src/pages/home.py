@@ -1,41 +1,35 @@
-import json
-
-import dash
-from dash import Input, Output, State, html, dcc
-
+from dash import html, dcc
 import dash_bootstrap_components as dbc
-
-import plotly.express as px
-import pandas as pd
-
-import numpy as np
-from pandas_datareader import data as pdr 
-import plotly.graph_objs as go 
-import yfinance as yf
-
+import json
 from pages.funcs import fetch
 
+# Opening the config.json file to get the name of the user
 with open("./config.json") as jsonFile:
     jsonObject = json.load(jsonFile)
     jsonFile.close()
 
+# Acessing the first and last name from the json file
 firstName = jsonObject["firstName"]
 lastName = jsonObject["lastName"]
 
+# This is setting up the color scheme for this layout
 colors = {
     'background': '#111111',
     'text': '#363636'
 }
 
-trendingStocks = [['^GSPC', '^DJI', '^IXIC'], ['S&P 500', 'Dow Jones Industrial Average', 'NASDAQ Composite']]
+# Here, we declared two lists. One contains important the S&P, Dow Jones, and Nasdaq Composite and the other list is going to contain the cards
+importantStocks = [['^GSPC', '^DJI', '^IXIC'], ['S&P 500', 'Dow Jones Industrial Average', 'NASDAQ Composite']]
 cardsList = []
+# This for loop makes three cards: one for each of the important stocks.
 for i in range(0, 3):
-    
-    stock = trendingStocks[0][i]
+    # This puts the stock that we're dealing with now into a variable so we don't have to type importantStocks[0][i] a bunch of times.
+    stock = importantStocks[0][i]
 
+    #
     fig, infor = fetch.homePage(stock)
 
-    cardText = html.H5(f"{trendingStocks[1][i]}:\n{float(infor[0])}$")
+    cardText = html.H5(f"{importantStocks[1][i]}:\n{float(infor[0])}$")
     
     cardsList.append(dbc.Card(
         [
