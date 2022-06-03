@@ -1,16 +1,28 @@
+# Importing json to manage storage in JSON files 
 import json
-import dash
+
+# Imports to find UNIX and current time stamps for historical data
 import datetime
 import time
+
+# Importing libraries needed for web scraping 
 import requests
 from bs4 import BeautifulSoup
+
+# Imports for rendering the web app 
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, html, dcc
-import plotly.express as px
+from dash import Input, Output, State, html
+
+# Importing the app instance 
 from app import app
+
+# Importing functions for fetching data
 from pages.funcs import fetch
-import plotly.graph_objects as g
+
+# Importing the data management library to read CSV 
 import pandas as pd
+
+# Generate the search field 
 text_input = html.Div(
     [
         html.Div(dbc.Input(id="input", placeholder="Ticker", type="text", debounce=True), style = {
@@ -21,25 +33,32 @@ text_input = html.Div(
     ]
 )
 
+# Read and store the watchlist from the JSON
 with open("pages/watchlist.json") as jsonFile:
     currentWatchlist = json.load(jsonFile)['watchlistStocks']
     
     jsonFile.close()
 
+# Read and store the portfolio from the JSON 
 with open("pages/portfolioStocks.json") as jsonFile:
     currentPortfolio = json.load(jsonFile)['portfolioStocks']
     
     jsonFile.close()
 
-
+# Split the layout into two variables for organization 
 layout_output = html.Div(
     [html.Div(id = 'layout-output', style = {})],
     id = 'layout-content'
 )
 
+# Store the ticker names as a stack like format 
 tickerName = []
+# Decorater function to manage the layout based on the user search 
 @app.callback(Output("layout-content", "children"), [Input("input", "value")])
 def output_text(value):
+    """
+    This function is used to generate the   
+    """
     try: 
         fig, fullname, info = fetch.searchData(str(value).upper())
         returnChild = dbc.Row([
@@ -83,7 +102,7 @@ def output_text(value):
 
             ], className="d-grid gap-2 col-6 mx-auto"
         )
-        tickerName.append(value)
+        tickerName.append(value.upper())
         return [buttons, html.Div([returnChild], id='layout-output', style = {'margin-top' : '30px'})]
 
     except: 
@@ -254,6 +273,7 @@ def updateWatchlist(n):
                 is_open=True,
                 style={"position": "fixed", "top": 66, "right": 10, "width": 350},
             )]
+
 layout = html.Div(children=[
     dbc.Row([
         dbc.Col([]),

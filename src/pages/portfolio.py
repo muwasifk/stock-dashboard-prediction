@@ -1,27 +1,35 @@
-from dataclasses import replace
+"""
+ICS3U 
+Muhammad Wasif Kamran & Eric Sui
+This file contains the code for the layout of the portfolio page
+"""
+# Importing the needed libraries
 import json
-import dash_bootstrap_components as dbc
 from dash import html, Output, Input, State, dcc
-import yfinance as yf
-import datetime
-import plotly.graph_objects as go
-
 from pages.funcs import fetch
 from app import app 
+import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
 
+# Setting the colors for the page
 colors = {
     'background': '#111111',
     'text': '#363636'
 }
 
+# This function creates the table that displays the portfolio
 def formtable():
+    # Open the json file
     with open("pages/portfolioStocks.json") as jsonFile:
         jsonObject = json.load(jsonFile)
         jsonFile.close()
 
+    # Retrieve the portfolio's stocks form the json file
     portfolioStocks = jsonObject["portfolioStocks"]
- 
+    
+    # Begin creating the table
     table_header = [
+        # The headers of the table columns
         html.Thead(
             html.Tr(
                 [
@@ -36,22 +44,34 @@ def formtable():
         )
     ]
 
+    # Variables that are used later for certain information
     totalProfit = 0
     totalBalance = 0
 
+    # Making a list for the table rows
     rows=[]
 
+    # This for loops generates each of the rows for each of the stocks in the portfolio
     for i in range(0, len(portfolioStocks)):
+        # currentStock is the list of the stock information for the current row
         currentStock = portfolioStocks[i]
+        # ticker is the ticker of the stock
         ticker = currentStock[0]
+        # currentPrice is the current price of the stock that is found using the webscraper
         currentPrice = float(fetch.portfolioFetchData(ticker).replace(",",""))
+        # buyPrice is the price of the stock when it was bought
         buyPrice = currentStock[3]
+        # volume is the amount of shares bought
         volume = currentStock[1]
+        # Calculating the profit
         profit = (currentPrice - buyPrice) * volume
+        # dateBought is the date the stock was bought
         dateBought = currentStock[2]
+        # Adding the monetary value to the balance and profit
         totalBalance += currentPrice*volume
         totalProfit += profit
 
+        # Now creating the row and appending it to the list
         rows.append(html.Tr([
             html.Td(ticker),
             html.Td(f"{currentPrice}$"),
@@ -61,26 +81,31 @@ def formtable():
             html.Td(dateBought)
         ]))
 
+    # Creating the table body using the list of rows
     table_body = [html.Tbody(rows)]
 
+    # Creating and returning the table by combining the header and body
     table = dbc.Table(table_header + table_body, striped = True, hover = True, id="tabletable")
-
     return table 
 
 def formPieChartVolume():
+    # Opening the json file containing the portfolio info
     with open("pages/portfolioStocks.json") as jsonFile:
         jsonObject = json.load(jsonFile)
         jsonFile.close()
 
     portfolioStocks = jsonObject["portfolioStocks"]
 
+    # Initializing lists for the lables and values of the stocks that will be used for the stock volume pie graph
     labels = []
     values = []
 
+    # Putting information in the lists
     for i in range(0, len(portfolioStocks)):
         labels.append(portfolioStocks[i][0]) 
         values.append(portfolioStocks[i][1])
 
+    # Creating and returning the pie graph
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, title = 'Volume Composition')])
     fig.update_layout(
     width=450,
@@ -88,23 +113,24 @@ def formPieChartVolume():
     return fig 
 
 def formPieChartProfit():
+    # Opening the json file
     with open("pages/portfolioStocks.json") as jsonFile:
         jsonObject = json.load(jsonFile)
         jsonFile.close()
 
     portfolioStocks = jsonObject["portfolioStocks"]
 
+    # Initializing a list for the labels and values
     labels = []
     values = []
 
+    # Putting information in the lists
     for i in range(0, len(portfolioStocks)):
         labels.append(portfolioStocks[i][0])
         profit = int(float(fetch.portfolioFetchData(portfolioStocks[i][0]).replace(",",""))) * portfolioStocks[i][1]
         values.append(profit)
 
-    print(labels)
-    print(values)
-
+    # Creating and returning the pie graph
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, title = 'Value Composition')])
     fig.update_layout(
     width=450,
@@ -112,27 +138,32 @@ def formPieChartProfit():
     return fig 
 
 def formbarchart():
+    # Opening the json file
     with open("pages/portfolioStocks.json") as jsonFile:
         jsonObject = json.load(jsonFile)
         jsonFile.close()
 
     portfolioStocks = jsonObject["portfolioStocks"]
     
+    # Initializing a dictionary and two lists for the bar graph
     industryCounts = {}
 
     x = []; y = []
 
+    # This for loops goes through portfolioStocks and puts the info about the industries into industryCounts
     for i in range(0, len(portfolioStocks)):
+        # This if statement checks if the current stock info being added has an industry
         if len(portfolioStocks[i]) == 5:
-
+            # THe following code adds the industry info 
             if portfolioStocks[i][0] not in industryCounts.keys():
                 industryCounts[portfolioStocks[i][4]] = 1 
             else:
                 industryCounts[portfolioStocks[i][4]] += 1 
-
+    # Appending the names of the industries and the volume for each industry to the x and y axes
     for i in industryCounts.keys():
         x.append(i); y.append(industryCounts[i])
     
+    # Creating and returning the graph
     fig = go.Figure([go.Bar(x=x, y=y)])
     fig.update_layout(
         width = 300
@@ -140,7 +171,9 @@ def formbarchart():
 
     return fig
 
+# Writing the layout for the page
 layout = html.Div(children = [
+    # Creating the heading for the page 
     html.H1(
         children = "YOUR PORTFOLIO",
         style = {
@@ -150,8 +183,10 @@ layout = html.Div(children = [
         }
     ),
     
+    # Creating a div for the two pie graphs
     html.Div(
         children = [
+            # We organize the three graphs using rows and columns
             dbc.Row(
                 [dbc.Col(
                     dcc.Graph(id = "volumepie"),
@@ -167,12 +202,17 @@ layout = html.Div(children = [
                 )]
             ),
             dbc.Row(
-                dcc.Graph(id = "industrybar")
+                dcc.Graph(id = "industrybar"),
+                style = {
+                    # Added today, might work
+                    'width': '75%'
+                }
             )
         ],
         id = "piegraphs"
     ),
     
+    # Creating a div where the table will go
     html.Div(
         style = {
             'margin': 'auto',
@@ -183,8 +223,11 @@ layout = html.Div(children = [
         id = 'body-table2'
     ),
 
+    # Creating the refresh and remove stock buttons
     html.Div(
+        # Organizing the two buttons using columns in a row
         children = [dbc.Row([
+            # Creating the two buttons
             dbc.Col(children = dbc.Button(
                 children = 'Refresh Data',
                 id='refresh-button2',
@@ -202,6 +245,7 @@ layout = html.Div(children = [
                 n_clicks=0,  outline=True, color="danger"
             ), width=6)]
         )],
+        # The styling for the div containing the buttons
         style = {
             'margin': 'auto',
             'width': '90%',
@@ -210,15 +254,15 @@ layout = html.Div(children = [
         }
     ),
 
+    # The following element creates a modal (pop-up) that the user uses as an inteface to remove a stock
     dbc.Modal(
+        # Creading the head, footer, and body of the portfolio add modal
         [
             dbc.ModalHeader(dbc.ModalTitle("Remove a stock"), close_button=True),
             dbc.ModalBody([
                 dbc.Input(id="removed-stock", placeholder="Stock ticker (in caps)", type="text", debounce = True),
                 dbc.Input(id="removed-stock-volume", placeholder="Amount of stocks to remove", type="number", debounce = True)
             ], id = "portfolio-remove-modal"),
-
-
             dbc.ModalFooter(
                 dbc.Button(
                     "Submit",
@@ -228,22 +272,28 @@ layout = html.Div(children = [
                 )
             ),
         ],
+        # The id and styling of the Modal
         id="remove-popup-portfolio",
         centered=True,
         is_open=False,
     ),
+    # Creating an id where a toast (notifaction) will pop up
     html.Div(id = 'remove-toast')
 ])
 
+# The callback for the refresh button
 @app.callback(
     Output('body-table2', 'children'),
     [Input('refresh-button2', 'n_clicks')]
 )
 def refreshTable(n_clicks):
+
+    # The function checks if the user has clicked at least once. If so, they it creates a table and returns it into the div.
     if n_clicks is not None:
         table = formtable()
         return [table]
 
+#The callback for the remove and submit buttons on the portfolio remove modal (if the user clicks on one of these, the modal closes or opens)
 @app.callback(
     Output('remove-popup-portfolio', 'is_open'),
     [Input('remove-button', 'n_clicks'),
@@ -251,6 +301,7 @@ def refreshTable(n_clicks):
     [State('remove-popup-portfolio', 'is_open')]
 )
 def removePopup(removeClicks, submitClicks, is_open):
+    # If one of the click numbers are greater than 0 when the callback fires (this is necessary because all the callback)
     if removeClicks or submitClicks:
         return not is_open
 @app.callback(
