@@ -1,0 +1,13 @@
+dash 
+dash_bootstrap_components
+
+requests
+bs4
+
+pandas
+numpy
+
+plotly 
+
+tensorflow
+keras

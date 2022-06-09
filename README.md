@@ -20,15 +20,23 @@ git clone https://github.com/wos-if/Stock-Dashboard-Prediction
 ```
 Install the dependencies 
 ```python
-pip install dash ...
+pip install -r requirements.txt
+```
+
+## Usage 
+Run
+```
+cd src
+python main.py 
 ```
 
 ## Known Bugs
-None 
+- The machine learning occasionally glitches out and gives an extremely unrelated result. Easiest way to fix is by refreshing the page. 
+- When selling shares from the portfolio, entering lowercase values will bug it out and remove random amounts. 
+- When the portfolio is empty, there is blank space rather than a blank pie chart. 
 
 ## Support 
-Email ... 
+Email mkamr4@ocdsb.ca and esui1@ocdsb.ca or open an Issue/Pull Request
 
 ## Sources
-
 
