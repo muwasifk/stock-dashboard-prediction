@@ -1,6 +1,6 @@
 """
 ICS3U 
-Muhammad Wasif Kamran & Eric Sui
+Muhammad Wasif Kamran
 This file contains various functions that are used elsewhere in the project to webscrape data from Yahoo Finance. 
 """
 
@@ -139,11 +139,13 @@ def homePage(ticker):
 
     # Generating the figure using the plotly.graph_objects library 
     # The first and only parameter is the data which contains the type of graph and the data where Data is on the x-axis and the candlesticks use open, high, low, and close numbers
-    fig = go.Figure(data=[go.Candlestick(x=df['Date'],
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close'])])
+    fig = go.Figure(data=[go.Candlestick(
+        x=df['Date'],
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close']
+    )])
     
     # We store the value for the URL using an fstring to avoid concatenation
     URL = f'https://finance.yahoo.com/quote/{ticker}/'
@@ -212,11 +214,13 @@ def searchData(ticker):
     config = {'displayModeBar': True}
     
     # Create the graph using the data from the CSV 
-    fig = go.Figure(data=[go.Candlestick(x=df['Date'],
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close'])])
+    fig = go.Figure(data=[go.Candlestick(
+        x=df['Date'],
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close']
+    )])
     
     # Change the title of the graph and set the scale for the x axis
     fig.update_layout(title_text='Historical Stock Data', title_x = 0.5)
@@ -250,7 +254,7 @@ def searchData(ticker):
     open = float(open.replace(',', ''))
 
     # The day range is the data at index 4 in the stats table 
-    dayRange = statsTable[4]; print (dayRange)
+    dayRange = statsTable[4]; 
     # Parse the data in the string
     dayRange = str(dayRange)[66:-5]
     # Split the string at the dash 

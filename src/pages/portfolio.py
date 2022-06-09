@@ -1,7 +1,7 @@
 """
 ICS3U 
 Muhammad Wasif Kamran & Eric Sui
-This file contains the code for the layout of the portfolio page
+This file contains the code for the layout of the portfolio page. This file was considerably larger than the others and was thus a joint effort. Most of the code was written by Eric and the code written by Wasif is marked in the docstrings with "Written by Wasif."
 """
 # Importing the needed libraries
 import json
@@ -16,7 +16,6 @@ colors = {
     'background': '#111111',
     'text': '#363636'
 }
-
 
 def calculateValue():
     """
@@ -42,6 +41,7 @@ def calculateValue():
         currentPrice = float(fetch.portfolioFetchData(ticker).replace(",",""))
         total += currentPrice * i[1]
     
+    # Return the calulated value to 2 decimal places
     return round(total, 2)
 
 
@@ -129,6 +129,8 @@ def formPieChartVolume():
         None
     Returns:
         volumePieGraph: go.Figure
+    
+    Written by Wasif. 
     """
     # Opening the json file containing the portfolio info
     with open("pages/portfolioStocks.json") as jsonFile:
@@ -157,6 +159,8 @@ def formPieChartValue():
         None
     Returns:
         valuePieGraph: go.Figure
+    
+    Written by Wasif. 
     """
     # Opening the json file
     with open("pages/portfolioStocks.json") as jsonFile:
@@ -186,6 +190,8 @@ def formbarchart():
         None
     Returns:
         industryBarGraph: go.Figure
+    
+    Written by Wasif. 
     """
     # Opening the json file
     with open("pages/portfolioStocks.json") as jsonFile:
@@ -215,6 +221,7 @@ def formbarchart():
     # Creating and returning the graph
     industryBarGraph = go.Figure([go.Bar(x=x, y=y)])
 
+    # Return the figure
     return industryBarGraph
 
 # Writing the layout for the page
@@ -546,6 +553,8 @@ def refreshVolumePie(n_clicks):
         n_clicks: int
     Returns:
         fig: go.Figure
+    
+    Written by Wasif. 
     """
     # The function checks if the user has clicked at least once. If so, they it creates a pie graph and returns it into the div.
     if n_clicks is not None: 
@@ -564,6 +573,8 @@ def refreshValuePie(n_clicks):
         n_clicks: int
     Returns:
         fig: go.Figure
+    
+    Written by Wasif. 
     """
     # The function checks if the user has clicked at least once. If so, they it creates a pie graph and returns it into the div.
     if n_clicks is not None: 
@@ -582,6 +593,8 @@ def refreshIndustryBar(n_clicks):
         n_clicks: int
     Returns:
         fig: go.Figure
+    
+    Written by Wasif. 
     """
     # The function checks if the user has clicked at least once. If so, they it creates a bar graph and returns it into the div.
     if n_clicks is not None: 

@@ -1,9 +1,9 @@
 """
 ICS3U
-Muhammad Wasif Kamran & Eric Sui 
+Muhammad Wasif Kamran
 This file contains the necessary code for the machine learning component of the project. 
 
-NOTE: This code is heavily inspired from the tutorial https://towardsdatascience.com/time-series-forecasting-with-recurrent-neural-networks-74674e289816
+NOTE: This code is heavily inspired from the tutorial https://towardsdatascience.com/time-series-forecasting-with-recurrent-neural-networks-74674e289816 
 """
 
 # Note that most of the numbers used here are found through trial and error until a realistic and somewhat accurate prediction was found for the testing set. The mathematical calculations to find the optimal values are too out of the scope of this course. 
@@ -169,8 +169,5 @@ def LSTMAlgorithm(ticker):
     # Generate the figure to display them together
     fig = go.Figure(data=[trace2, trace1], layout=layout)
 
-
     # Return the figure 
     return fig 
-
-

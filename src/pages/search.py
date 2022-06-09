@@ -1,3 +1,9 @@
+"""
+ICS3U 
+Muhammad Wasif Kamran & Eric Sui 
+This file contains the code needed for the search page and its functionalities. This was also a very complex page and was a joint effort. Most of the code was written by Wasif and the code written by Eric has been explicitly mentioned with "Written by Eric."
+"""
+
 # Importing json to manage storage in JSON files 
 import json
 
@@ -178,7 +184,7 @@ def toggle_modal(portfolioClicks, submitClicks, is_open):
     if portfolioClicks or submitClicks:
         return not is_open
 
-
+# This callback was used to take the information for updating portfolio and outputting the success notification
 @app.callback(
     Output('portfolio-toast', 'children'),
     [
@@ -258,9 +264,9 @@ def updatePortfolio(clicks, volumeValue, buyDate):
                         soup = BeautifulSoup(page.content, "html.parser")
                         
                         # Parse through the HTML to get the actual industry name 
-                        industry = soup.find_all(class_='D(ib) Va(t)'); print(industry)
+                        industry = soup.find_all(class_='D(ib) Va(t)'); 
                         industry = industry[0] 
-                        industry = str(industry).split(':')[2]; print(industry)
+                        industry = str(industry).split(':')[2]; 
                         industry = industry.split('Fw(600)">')[1] 
                         industry = industry.split('<')[0]
 
@@ -278,6 +284,7 @@ def updatePortfolio(clicks, volumeValue, buyDate):
                                 json.dump(jsonData, jsonFile)
                                 jsonFile.close()
 
+                            # Show the success notification
                             return [dbc.Toast(
                                 id="auto-toast",
                                 icon="success",
@@ -307,6 +314,7 @@ def updatePortfolio(clicks, volumeValue, buyDate):
                             json.dump(jsonData, jsonFile)
                             jsonFile.close()
                         
+                        # Success notification
                         return [dbc.Toast(
                             id="auto-toast",
                             icon="success",
@@ -364,6 +372,8 @@ def updateWatchlist(n):
         n: int
     Returns:
         dbc.Toast
+    
+    Written by Eric. 
     """
     # Make sure that the user has actually inputted something and the function is not getting fired at page load 
     if n is not None:
