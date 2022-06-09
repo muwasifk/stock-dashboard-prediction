@@ -1,6 +1,6 @@
 """
 ICS3U 
-Muhammad Wasif Kamran & Eric Sui 
+Muhammad Wasif Kamran
 This file contains the code that runs in terminal at the start of the programming if the user is new. 
 """
 
@@ -8,7 +8,7 @@ This file contains the code that runs in terminal at the start of the programmin
 import json
 
 # Import the app instance
-from app import app 
+from app import app
 
 # Open the JSON file and add the contents to a dictionary
 with open("config.json") as jsonFile:
@@ -20,7 +20,7 @@ firstName = jsonObject["firstName"]
 lastName = jsonObject["lastName"]
 
 # Run the following lines if and only if the first name and last name have not been saved yet
-if firstName == "" and lastName == "": 
+if firstName == "" and lastName == "":
     # Tell the user what is happening at the intial running of the program
     print("It seems like you're a new user. What is your name?")
     # Get inputs for first and last name
@@ -37,10 +37,16 @@ if firstName == "" and lastName == "":
     with open('config.json', 'w') as jsonFile:
         json.dump(jsonData, jsonFile)
         jsonFile.close()
-else: 
+else:
     print(f"Welcome back, {firstName} {lastName}!")
-    
+
+# Ask them to press enter to launch app
 input("Press enter to launch the app: ")
+
+# Execute the index.py to get the homepage layout
 exec(open('index.py').read())
-app.run_server(debug=False, port=8000)
-    
+
+# Start the server instance
+# Run the web app on port 8000 by default
+# debug is set to True when testing to see live changes rather than running the entire program again to test updates
+app.run_server(debug=False, port=8000, dev_tools_silence_routes_logging=True)

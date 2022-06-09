@@ -1,6 +1,6 @@
 """
 ICS3U 
-Muhammad Wasif Kamran & Eric Sui 
+Muhammad Wasif Kamran
 This file stores the configuration code for the app. 
 """
 

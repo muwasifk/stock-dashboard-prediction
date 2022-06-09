@@ -1,6 +1,6 @@
 """
 ICS3U 
-Muhammad Wasif Kamran & Eric Sui 
+Muhammad Wasif Kamran 
 This file contains the code to display the watchlist page. 
 """
 
@@ -106,6 +106,7 @@ layout = html.Div(children=[
     html.Div(
         # Row to contain the two buttons 
         dbc.Row([
+            
             # Refresh button 
             dbc.Col(dbc.Button(
                 children = 'Refresh Data',
@@ -115,6 +116,7 @@ layout = html.Div(children=[
                 id='refresh-button',
                 n_clicks=0,  outline=True, color="success"
             )),
+
             # Remove button
             dbc.Col(dbc.Button(
                 children = 'Remove stock',
@@ -201,6 +203,7 @@ def removePopup(removeClicks, submitClicks, is_open):
     if removeClicks or submitClicks:
         return not is_open
 
+# Initialize last removed variable to hold the stock that has been removed most recently. 
 lastRemoved = ""
 
 # Decorator function to manage the removing of a stock from the watchlist by taking the number of times submit has been clicked and the value in the input field to determine which stock is to be removed and outputs a toast notification
@@ -241,6 +244,7 @@ def removeWatchlistStock(clicks, ticker):
                 json.dump(jsonObject, jsonFile)
                 jsonFile.close()
             
+            # Update the last removed ticker
             lastRemoved = ticker
             # Return a success toast notificiation 
             return [dbc.Toast(
@@ -254,6 +258,7 @@ def removeWatchlistStock(clicks, ticker):
         except:
             # This code runs if the ticker is not in list 
             # Making sure the user actually inputted a ticker and not empty and that they actually clicked the button as opposed to page load 
+            # Make sure that the call back is not firing again unexpectedly (through the last removed condition)
             if ticker is not None and clicks is not None and lastRemoved != ticker: 
                 # Return an error toast 
                 return [dbc.Toast(
