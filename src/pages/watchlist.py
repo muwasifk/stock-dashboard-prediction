@@ -34,7 +34,7 @@ def formtable():
     watchlistStocks = jsonObject["watchlistStocks"]
 
     # Generate the table header with the different stats to be displayed 
-    table_header = [
+    tableHeader = [
         html.Thead(
             html.Tr(
                 [
@@ -73,10 +73,10 @@ def formtable():
         )
 
     # Store the table body of rows in a list   
-    table_body = [html.Tbody(rows)]
+    tableBody = [html.Tbody(rows)]
 
     # Generate the table by combining the header and body with settings: table should not have a border, should be striped, and if mouse is hovering it changes color
-    table = dbc.Table(table_header + table_body, bordered = False, striped = True, hover=True)
+    table = dbc.Table(tableHeader + tableBody, bordered = False, striped = True, hover=True)
     
     # Return the table component to be displayed in layout 
     return table
@@ -110,13 +110,10 @@ layout = html.Div(children=[
             dbc.Col(dbc.Button(
                 children = 'Refresh Data',
                 style = {
-                    'margin': 'auto',
-                    'width': '90%',
-                    'padding': '30px',
                     'text-align': 'center'
                 },
                 id='refresh-button',
-                n_clicks=0,  outline=True, color="danger"
+                n_clicks=0,  outline=True, color="success"
             )),
             # Remove button
             dbc.Col(dbc.Button(
@@ -128,8 +125,14 @@ layout = html.Div(children=[
                 n_clicks=0,  outline=True, color="danger"
             ), width=6)
         ]), 
-        # Bootstrap to align the buttons 
-        className="d-grid gap-2 col-6 mx-auto"), 
+        # The styling for the div containing the buttons
+        style = {
+            'margin': 'auto',
+            'width': '90%',
+            'padding': '30px',
+            'text-align': 'center'
+        }
+    ), 
         # Modal for the remove stock option 
         dbc.Modal(
             [
@@ -198,6 +201,8 @@ def removePopup(removeClicks, submitClicks, is_open):
     if removeClicks or submitClicks:
         return not is_open
 
+lastRemoved = ""
+
 # Decorator function to manage the removing of a stock from the watchlist by taking the number of times submit has been clicked and the value in the input field to determine which stock is to be removed and outputs a toast notification
 @app.callback(
     Output('remove-toast2', 'children'),
@@ -221,22 +226,25 @@ def removeWatchlistStock(clicks, ticker):
         with open("pages/watchlist.json") as jsonFile:
             jsonObject = json.load(jsonFile)
             jsonFile.close()
-            watchlistStocks = jsonObject["watchlistStocks"]
+        watchlistStocks = jsonObject["watchlistStocks"]
         
         # Error handling to make sure that the inputted ticker is actually in the list 
         try: 
             # This code runs if the ticker exists in list
             # Remove the ticker from the list 
             watchlistStocks.remove(ticker)
+
             # Create a dictionary with the updates list 
             jsonObject = {'watchlistStocks': watchlistStocks}
             # Open the JSON and dump the new information in 
             with open('pages/watchlist.json', 'w') as jsonFile: 
                 json.dump(jsonObject, jsonFile)
                 jsonFile.close()
+            
+            lastRemoved = ticker
             # Return a success toast notificiation 
             return [dbc.Toast(
-                id="sudhgsdfhg-toast",
+                id="success-toast",
                 icon="success",
                 header=f"Success! Removed from your watchlist.",
                 duration=2750,
@@ -246,7 +254,7 @@ def removeWatchlistStock(clicks, ticker):
         except:
             # This code runs if the ticker is not in list 
             # Making sure the user actually inputted a ticker and not empty and that they actually clicked the button as opposed to page load 
-            if ticker is not None and clicks is not None: 
+            if ticker is not None and clicks is not None and lastRemoved != ticker: 
                 # Return an error toast 
                 return [dbc.Toast(
                 id="error-toast",

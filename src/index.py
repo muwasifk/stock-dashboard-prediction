@@ -60,7 +60,6 @@ navbar = dbc.Navbar(
     className="mb-5"
 )
 
-#TODO: figure out what this does
 def toggle_navbar_collapse(n, is_open):
     """
     This function toggles the boolean for whether the navbar is open. 
@@ -117,4 +116,3 @@ def displayPage(newpath):
 
 # Run the web app on port 8000 by default
 # debug is set to True when testing to see live changes rather than running the entire program again to test updates
-app.run_server(debug=True, port=8000)
