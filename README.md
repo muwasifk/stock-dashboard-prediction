@@ -1,6 +1,8 @@
 # Stock Dashboard and Predictor
 This project contains a custom web based dashboard for stocks as well as machine learning algorithms to predict the prices of various stocks. 
 
+>FOR THE GRADER: Inside the code, the files that were written by a specific person has their name in the header comments. 
+
 <p align="center">
   <img src="https://img.shields.io/github/stars/wos-if/Stock-Dashboard-Prediction"/>
   <img src = "https://img.shields.io/github/forks/wos-if/Stock-Dashboard-Prediction" />
@@ -14,6 +16,8 @@ This project contains a custom web based dashboard for stocks as well as machine
 - Machine Learning Algorithm to Predict Prices of Stocks 
 
 ## Installation 
+Make sure you are using Python 3.8.x in order for TensorFlow to work. 
+
 Clone the repository 
 ```
 git clone https://github.com/wos-if/Stock-Dashboard-Prediction
@@ -29,11 +33,17 @@ Run
 cd src
 python main.py 
 ```
-
+In the terminal there will be a localhost link (most likely http://127.0.0.1:8000/) which you can enter into a browser (preferably Chromium based) to access the web app. The library used for rendering the web app will print out useless information in the console and it can be safely ignored. 
 ## Known Bugs
 - The machine learning occasionally glitches out and gives an extremely unrelated result. Easiest way to fix is by refreshing the page. 
 - When selling shares from the portfolio, entering lowercase values will bug it out and remove random amounts. 
 - When the portfolio is empty, there is blank space rather than a blank pie chart. 
+- The error handling for portfolio is a bit finicky. 
+
+### Notes 
+- When searching for a ticker, you may have to wait some time depending on your machine for the machine learning algorithm to run. 
+- Upon launching the program, it may take time for the web app to actually load. 
+
 
 ## Support 
 Email mkamr4@ocdsb.ca and esui1@ocdsb.ca or open an Issue/Pull Request

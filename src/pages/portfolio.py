@@ -418,6 +418,27 @@ def removePortfolioStock(clicks, ticker, removedNum):
         # Error handling in case the user doesn't input a value for ticker
         if ticker is not None:
             ticker = str(ticker)
+
+            # Make sure the ticker is uppercase
+            if ticker != ticker.upper():
+                return [dbc.Toast(
+                    id="error-toast",
+                    icon="danger",
+                    header=f"Ticker name must be in capitals.",
+                    duration=2750,
+                    is_open=True,
+                    style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                )]
+            
+            if ticker.isnumeric(): 
+                return [dbc.Toast(
+                    id="error-toast",
+                    icon="danger",
+                    header=f"Ticker name must be letters.",
+                    duration=2750,
+                    is_open=True,
+                    style={"position": "fixed", "top": 66, "right": 10, "width": 350},
+                )]
         # Checking that the user actually clicked the button 
         if clicks is not None:
             # Opening the json file and retrieving the data into a variable
